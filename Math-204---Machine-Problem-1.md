@@ -1,0 +1,233 @@
+---
+title: "Math 204 - Machine Problem 1"
+author: "Francis Dave Cabanting"
+date: "10/4/2020"
+output: 
+  html_document:
+    keep_md: true
+    toc: true
+---
+
+## Part I
+#### 1.
+Create a variable in R that contains the total number of Active Case and assign it to `total`.
+
+```r
+asym <- 326
+mild <- 67
+seve <- 7
+crit <- 1
+
+total <- asym + mild + seve + crit
+total
+```
+
+```
+## [1] 401
+```
+#### 2.
+Create a numeric vector in R that contains the distribution of COVID-19 cases `{326, 67, 7, 1}` and assign them to `dist_Cases`. Assign their status category `{asymptomatic, mild, severe and critical}` as names of the vector elements.
+
+```r
+dist_Cases <- c('asymptomatic' = asym,
+                'mild' = mild,
+                'severe' = seve,
+                'critical' = crit)
+dist_Cases
+```
+
+```
+## asymptomatic         mild       severe     critical 
+##          326           67            7            1
+```
+#### 3. 
+Using the created numeric vector in part I.2, select the values representing the mild and asymptomatic cases and assign them to `mild_2_asymtomatic`.
+
+
+```r
+mild_2_asymptomatic <- dist_Cases[c('mild','asymptomatic')]
+mild_2_asymptomatic
+```
+
+```
+##         mild asymptomatic 
+##           67          326
+```
+#### 4.
+In the data province with new cases, we only have Davao City and Davao del Norte. Davao del Sur, Davao Oriental, Davao de Oro and Davao Occidental have no new COVID-19 cases. Create an object in R (numeric vector) and assign it to `newcases`. Include those provinces with no new cases.
+
+
+```r
+provinces <- c('Davao City',
+               'Davao del Norte',
+               'Davao del Sur',
+               'Davao Oriental',
+               'Davao de Oro',
+               'Davao Occidental')
+newcases <- c(7,7,0,0,0,0)
+names(newcases) <- provinces
+newcases
+```
+
+```
+##       Davao City  Davao del Norte    Davao del Sur   Davao Oriental 
+##                7                7                0                0 
+##     Davao de Oro Davao Occidental 
+##                0                0
+```
+#### 5.
+Print the object `newcases` by selecting only the provinces with new COVID-19 cases.
+
+```r
+newcases[newcases>0]
+```
+
+```
+##      Davao City Davao del Norte 
+##               7               7
+```
+## Part II
+
+#### a.
+Create an R object or matrix named `breakdown` that will hold the COVID-19 total active cases, total deaths, and total recoveries for the different provinces and city in Davao Region. Assign appropriate column names `{Total Active, Total Deaths, Total Recoveries}` and row names `{names of provinces and city}` to the matrix.
+
+
+```r
+provs <- c('Davao City',
+           'Davao de Oro',
+           'Davao del Norte',
+           'Davao del Sur',
+           'Davao Occidental',
+           'Davao Oriental')
+categs <- c('Total Active Cases',
+           'Total Deaths',
+           'Total Recoveries')
+breakdown <- matrix(c(214,57,1200,
+                      66,1,117,
+                      68,4,203,
+                      31,4,101,
+                      4,2,36,
+                      18,1,196),
+                    nrow = 6,
+                    ncol = 3,
+                    byrow = TRUE)
+colnames(breakdown) <- categs
+rownames(breakdown) <- provs
+
+breakdown
+```
+
+```
+##                  Total Active Cases Total Deaths Total Recoveries
+## Davao City                      214           57             1200
+## Davao de Oro                     66            1              117
+## Davao del Norte                  68            4              203
+## Davao del Sur                    31            4              101
+## Davao Occidental                  4            2               36
+## Davao Oriental                   18            1              196
+```
+
+
+#### b.
+Get a subset of the matrix `breakdown` by selecting only the data for Davao City.
+
+```r
+breakdown['Davao City',]
+```
+
+```
+## Total Active Cases       Total Deaths   Total Recoveries 
+##                214                 57               1200
+```
+#### c.
+Get a subset of the matrix by selecting those whose number of deaths is below `4`.
+
+```r
+breakdown[breakdown[,'Total Deaths']<4,]
+```
+
+```
+##                  Total Active Cases Total Deaths Total Recoveries
+## Davao de Oro                     66            1              117
+## Davao Occidental                  4            2               36
+## Davao Oriental                   18            1              196
+```
+#### d.
+For the whole Davao Region get the total number of active cases, total deaths and total recoveries as of September 8, 2020, and assign it to the object `sumDavao`.
+
+```r
+sumDavao <- colSums(breakdown)
+
+sumDavao
+```
+
+```
+## Total Active Cases       Total Deaths   Total Recoveries 
+##                401                 69               1853
+```
+#### e.
+Create a data frame using the same data presented in Table 1 and 2 above and assign it to `covid_data`. Note: Some information in Table 1 do not have provincial/city breakdowns, hence, you cannot include them in the data frame.
+
+
+```r
+covid_data <- data.frame(breakdown,
+                         'New Cases' = newcases)
+covid_data
+```
+
+```
+##                  Total.Active.Cases Total.Deaths Total.Recoveries New.Cases
+## Davao City                      214           57             1200         7
+## Davao de Oro                     66            1              117         7
+## Davao del Norte                  68            4              203         0
+## Davao del Sur                    31            4              101         0
+## Davao Occidental                  4            2               36         0
+## Davao Oriental                   18            1              196         0
+```
+
+#### f.
+Insert a column to the data frame `covid_data` by adding a column for new cases `[TRUE/FALSE]`.
+
+```r
+covid_data[['Has New Cases']] <- covid_data['New.Cases']>0
+covid_data
+```
+
+```
+##                  Total.Active.Cases Total.Deaths Total.Recoveries New.Cases
+## Davao City                      214           57             1200         7
+## Davao de Oro                     66            1              117         7
+## Davao del Norte                  68            4              203         0
+## Davao del Sur                    31            4              101         0
+## Davao Occidental                  4            2               36         0
+## Davao Oriental                   18            1              196         0
+##                  New.Cases
+## Davao City            TRUE
+## Davao de Oro          TRUE
+## Davao del Norte      FALSE
+## Davao del Sur        FALSE
+## Davao Occidental     FALSE
+## Davao Oriental       FALSE
+```
+## Part III
+
+You are given a sample of 50 COVID-19 cases based on the records release by DOH. The data in excel format is available in the UVE as an attachment to machine problem 1.
+
+
+
+#### i. 
+Import the dataset to R.
+
+#### ii. 
+Convert the data into a tibble data frame and assign it to `covid_raw`.
+
+#### iii. 
+Create a new data frame `above_60` by selecting the patients who are above 60 years old.
+
+#### iv. 
+Extract the patients who is above 60 years old who already recovered from COVID-19. Assign the new data frame to `recovery_60`.
+
+#### v. 
+Create a new data frame `no_signs` that contains the asymtomatic patients or patients with `NA` values for the listed symptoms for COVID-19.
+
+
